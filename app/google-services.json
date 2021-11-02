@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "614227964284",
+    "project_id": "runningtracker-cb7d4",
+    "storage_bucket": "runningtracker-cb7d4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:614227964284:android:479344a7c2ec5c62e6b4f9",
+        "android_client_info": {
+          "package_name": "com.example.runningtracker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "614227964284-ocsn1sam08rat8kea2vtaitoq9tfrgku.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDLg424lyhpBCc_9bEFNgoZSAiQlb-gIGQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "614227964284-ocsn1sam08rat8kea2vtaitoq9tfrgku.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
