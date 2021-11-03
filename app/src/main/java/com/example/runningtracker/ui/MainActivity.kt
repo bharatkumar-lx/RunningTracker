@@ -1,16 +1,10 @@
-package com.example.runningtracker
+package com.example.runningtracker.ui
 
-import android.app.Person
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.annotation.RequiresApi
 import com.example.runningtracker.databinding.ActivityMainBinding
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.*
-import kotlinx.coroutines.tasks.await
-import java.io.Serializable
 
 class MainActivity : AppCompatActivity() {
     private val TAG = "MainActivity"
