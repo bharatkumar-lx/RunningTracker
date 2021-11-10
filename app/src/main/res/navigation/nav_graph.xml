@@ -8,6 +8,10 @@
         app:destination="@+id/trackingFragment"
         app:launchSingleTop="true"/>
 
+    <action android:id="@+id/action_global_RunFragment"
+        app:destination="@+id/runFragment"
+        app:launchSingleTop="true"/>
+
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.example.runningtracker.ui.fragment.SettingsFragment"

@@ -33,6 +33,7 @@ import javax.inject.Inject
 import kotlin.math.round
 
 
+const val CANCEL_TRACKING_DIALOG_TAG = "cancelTracker"
 @AndroidEntryPoint
 class TrackingFragment : Fragment() {
     private val viewModel: MainViewModel by viewModels()
@@ -60,6 +61,16 @@ class TrackingFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        if(savedInstanceState != null){
+            val cancelTrackingDialog = parentFragmentManager.findFragmentByTag(
+                CANCEL_TRACKING_DIALOG_TAG
+            ) as CancleTrackingDialog?
+            cancelTrackingDialog?.setYesListener {
+                stopRun()
+            }
+        }
+
         binding.mapView.onCreate(savedInstanceState)
         binding.mapView.getMapAsync{
             map = it
@@ -135,21 +146,15 @@ class TrackingFragment : Fragment() {
     }
 
     private fun showCancelTrackingDialog(){
-        val dialog = MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Cancel the Run?")
-            .setMessage("Are you sure to cancel the run")
-            .setIcon(R.drawable.ic_delete)
-            .setPositiveButton("Yes"){_,_ ->
+        CancleTrackingDialog().apply {
+            setYesListener {
                 stopRun()
             }
-            .setNegativeButton("No"){ dialogInterface, _ ->
-                dialogInterface.cancel()
-            }
-            .create()
-        dialog.show()
+        }.show(parentFragmentManager,CANCEL_TRACKING_DIALOG_TAG)
     }
 
     private fun stopRun(){
+        binding.tvTimer.text = "00:00:00:00"
         binding.btnFinishRun.visibility = View.INVISIBLE
         sendCommandToService(ACTION_STOP_SERVICE)
         findNavController().navigate(R.id.action_trackingFragment_to_runFragment)
@@ -168,10 +173,10 @@ class TrackingFragment : Fragment() {
 
     private fun updateTracking(isTracking: Boolean){
         this.isTracking = isTracking
-        if(!isTracking){
+        if(!isTracking && currentTimeInMills > 0L){
             binding.btnToggleRun.text = "Start"
             binding.btnFinishRun.visibility = View.VISIBLE
-        }else{
+        }else if(isTracking){
             binding.btnToggleRun.text = "Stop"
             menu?.getItem(0)?.isVisible = true
             binding.btnFinishRun.visibility = View.GONE
@@ -230,7 +235,6 @@ class TrackingFragment : Fragment() {
                 Snackbar.LENGTH_LONG
             ).show()
             stopRun()
-
         }
 
     }

@@ -87,7 +87,6 @@ class RunFragment : Fragment(){
                     4 -> viewModel.sortRuns(SortType.CALORIES)
                 }
 
-
             }
 
             override fun onNothingSelected(p0: AdapterView<*>?) {
