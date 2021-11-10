@@ -9,14 +9,18 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.runningtracker.R
+import com.example.runningtracker.adapter.RunAdapter
 import com.example.runningtracker.databinding.FragmentRunBinding
+import com.example.runningtracker.util.SortType
 import com.example.runningtracker.util.TrackingUtility
 import com.example.runningtracker.viewmodels.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -29,6 +33,8 @@ class RunFragment : Fragment(){
     private lateinit var permissionLauncher: ActivityResultLauncher<Array<String>>
     private val permissionList = mutableListOf<String>()
 
+    private lateinit var runAdapter: RunAdapter
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -36,14 +42,10 @@ class RunFragment : Fragment(){
     ): View {
         binding = FragmentRunBinding.inflate(inflater,container,false)
         return binding.root
-
     }
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.fab.setOnClickListener {
-            findNavController().navigate(R.id.action_runFragment_to_trackingFragment)
-        }
         permissionLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()){
             if(!TrackingUtility.hasLocationPermission(requireContext())){
                 Toast.makeText(requireContext(),"Permission denied",Toast.LENGTH_SHORT).show()
@@ -65,7 +67,49 @@ class RunFragment : Fragment(){
             }
         }
         requestPermission()
+        setupRecyclerView()
+
+        when(viewModel.sortType){
+            SortType.DATE -> binding.spFilter.setSelection(0)
+            SortType.RUNNING_TIME -> binding.spFilter.setSelection(1)
+            SortType.DISTANCE -> binding.spFilter.setSelection(2)
+            SortType.AVG_TIME -> binding.spFilter.setSelection(3)
+            SortType.CALORIES -> binding.spFilter.setSelection(4)
+        }
+
+        binding.spFilter.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+            override fun onItemSelected(adapterView: AdapterView<*>?, view: View?, pos: Int, id: Long) {
+                when(pos){
+                    0 -> viewModel.sortRuns(SortType.DATE)
+                    1 -> viewModel.sortRuns(SortType.RUNNING_TIME)
+                    2 -> viewModel.sortRuns(SortType.DISTANCE)
+                    3 -> viewModel.sortRuns(SortType.AVG_TIME)
+                    4 -> viewModel.sortRuns(SortType.CALORIES)
+                }
+
+
+            }
+
+            override fun onNothingSelected(p0: AdapterView<*>?) {
+
+            }
+        }
+
+        viewModel.runs.observe(viewLifecycleOwner,{
+            runAdapter.submitList(it)
+        })
+        binding.fab.setOnClickListener {
+            findNavController().navigate(R.id.action_runFragment_to_trackingFragment)
+        }
     }
+
+    private fun setupRecyclerView() = binding.rvRuns.apply {
+        runAdapter = RunAdapter()
+        adapter = runAdapter
+        layoutManager = LinearLayoutManager(requireContext())
+    }
+
+
 
     private fun requestPermission(){
         if(TrackingUtility.hasLocationPermission(requireContext())){
